@@ -1,8 +1,16 @@
+require_relative "board"
+
 class Tile
-  def initialize(bombed)
+  def initialize(board, bombed)
+    @board = board
     @bombed = bombed
     @flagged = false
     @revealed = false
+  end
+
+  def inspect
+    "#{self.class.name}:#{self.object_id} " +
+    "@bombed=#{@bombed}, @flagged=#{@flagged}, @revealed=#{@revealed}"
   end
 
   def bombed?

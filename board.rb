@@ -18,9 +18,9 @@ class Board
         i += 1
         if bomb_count < 10 && bomb_positions.include?(i)
           bomb_count += 1
-          Tile.new(true)
+          Tile.new(self, true)
         else
-          Tile.new(false)
+          Tile.new(self, false)
         end
       end
     end
