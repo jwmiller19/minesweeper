@@ -38,6 +38,10 @@ class Board
     end
   end
 
+  def reveal_bombs
+    grid.each { |row| row.select(&:bombed?).each(&:reveal) }
+  end
+
   def win?
     return false if lose?
 
