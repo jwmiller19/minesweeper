@@ -30,9 +30,18 @@ class Tile
     flagged? ? @flagged = false : @flagged = true
   end
 
+  # Reveal a tile and return neighbor_bomb_count. Also reveal all neighboring
+  # tiles recursively unless any neighbors have bombs
   def reveal
-    @revealed = true unless revealed?
+    return if revealed?
+    @revealed = true
     return if bombed?
+
+    bombs = neighbor_bomb_count
+
+    neighbors.each { |neighbor| neighbor.reveal } unless bombs > 0
+
+    bombs
   end
 
   # Return an array of all tiles neighboring self (including diagonals)
