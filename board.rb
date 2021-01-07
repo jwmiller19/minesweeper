@@ -27,4 +27,14 @@ class Board
       end
     end
   end
+
+  def render
+    puts "  #{(0...grid.length).to_a.join(" ")}"
+
+    grid.each_with_index do |row, i|
+      row_parts = ["#{i}"]
+      row.each { |tile| row_parts << "#{tile}" }
+      puts row_parts.join(" ")
+    end
+  end
 end

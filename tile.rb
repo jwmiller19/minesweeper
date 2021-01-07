@@ -14,6 +14,24 @@ class Tile
     "@bombed=#{@bombed}, @flagged=#{@flagged}, @revealed=#{@revealed}"
   end
 
+  def to_s
+    if flagged?
+      "F"
+    elsif revealed?
+      bombs = neighbor_bomb_count
+      
+      if bombed?
+        "B"
+      elsif bombs > 0
+        bombs.to_s
+      else
+        "_"
+      end
+    else
+      "*"
+    end
+  end
+
   def bombed?
     @bombed
   end
@@ -27,6 +45,7 @@ class Tile
   end
 
   def toggle_flagged
+    return if revealed?
     flagged? ? @flagged = false : @flagged = true
   end
 
