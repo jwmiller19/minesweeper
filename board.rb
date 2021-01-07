@@ -37,4 +37,18 @@ class Board
       puts row_parts.join(" ")
     end
   end
+
+  def win?
+    return false if lose?
+
+    grid.all? { |row| row.reject(&:bombed?).all?(&:revealed?) }
+  end
+
+  def lose?
+    grid.any? { |row| row.select(&:bombed?).any?(&:revealed?) }
+  end
+
+  def over?
+    lose? || win?
+  end
 end
