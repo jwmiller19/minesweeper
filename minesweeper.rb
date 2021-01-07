@@ -1,23 +1,32 @@
+require "yaml"
 require_relative "board"
 
 class MinesweeperGame
   attr_reader :board
 
-  def initialize
-    @board = Board.new
+  def initialize(board)
+    @board = board
   end
 
   def get_input
     puts "Enter the coordinates of the tile you want to select, followed by "
-    puts "'r' to reveal it or 'f' to flag/unflag it (e.g, '0,1 r') :"
+    puts "'r' to reveal it or 'f' to flag/unflag it (e.g, '0,1 r')."
+    puts "You can enter 'save <save_name>' to save your game to a file: "
 
-    pos, arg = gets.chomp.split
+    args = gets.chomp.split
+    pos, arg = args
+
     pos = parse_pos(pos)
 
-    raise "Invalid position: #{pos}" unless valid_pos?(pos)
-    raise "Invalid argument: #{arg}" unless valid_arg?(arg)
+    raise "No save name given. Save aborted." if saving?(args) && arg.nil?
+    raise "Invalid position: #{pos}" unless saving?(args) || valid_pos?(pos)
+    raise "Invalid argument: #{arg}" unless saving?(args) || valid_arg?(arg)
 
-    [pos, arg]
+    if saving?(args)
+      args
+    else
+      [pos, arg]
+    end
   rescue => exception
     puts exception
     retry
@@ -36,18 +45,22 @@ class MinesweeperGame
     arg == "r" || arg == "f"
   end
 
+  def saving?(args)
+    args[0] == "save"
+  end
+
   def play_turn
     system("clear")
     board.render
 
-    pos, arg = get_input
-    
-    case arg
+    arg1, arg2 = get_input
 
-    when "r"
-      board[pos].reveal
-    when "f"
-      board[pos].toggle_flagged
+    if arg1 == "save"
+      save_game(arg2)
+    elsif arg2 == "r"
+      board[arg1].reveal
+    elsif arg2 == "f"
+      board[arg1].toggle_flagged
     end
   end
 
@@ -62,7 +75,35 @@ class MinesweeperGame
     message = won ? "You win!" : "You lose!"
     puts message
   end
+
+  def save_game(name)
+    serialized_board = board.to_yaml
+    File.write("#{name}.yaml", serialized_board)
+  end
 end
 
-game = MinesweeperGame.new
-game.run
+# Game start logic
+
+def load_game(file_name)
+  serialized_board = File.read(file_name)
+  YAML::load(serialized_board)
+end
+
+def start_game
+  flag, file_name = ARGV.slice!(0..1)
+  raise "Need at least two arguments" unless flag.nil? || file_name
+  raise "Too many arguments" unless ARGV.empty?
+
+  if flag == "-l"
+    board = load_game(file_name)
+  elsif flag
+    raise "#{flag} is not a valid argument"
+  else
+    board = Board.new
+  end
+
+  game = MinesweeperGame.new(board)
+  game.run
+end
+
+start_game
