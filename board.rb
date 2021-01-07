@@ -28,6 +28,11 @@ class Board
     end
   end
 
+  def [](pos)
+    row, col = pos
+    grid[row][col]
+  end
+
   def render
     puts "  #{(0...grid.length).to_a.join(" ")}"
 

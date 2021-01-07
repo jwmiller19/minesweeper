@@ -45,9 +45,9 @@ class MinesweeperGame
     case arg
 
     when "r"
-      board.grid[pos[0]][pos[1]].reveal
+      board[pos].reveal
     when "f"
-      board.grid[pos[0]][pos[1]].toggle_flagged
+      board[pos].toggle_flagged
     end
   end
 
