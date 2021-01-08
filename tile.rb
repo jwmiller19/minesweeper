@@ -1,3 +1,4 @@
+require "colorize"
 require_relative "board"
 
 class Tile
@@ -16,19 +17,41 @@ class Tile
 
   def to_s
     if flagged?
-      "F"
+      "F".light_red
     elsif revealed?
       bombs = neighbor_bomb_count
       
       if bombed?
-        "B"
+        "B".bold.red
       elsif bombs > 0
-        bombs.to_s
+        color_bomb_count(bombs.to_s)
       else
-        "_"
+        "_".light_white
       end
     else
-      "*"
+      "*".white
+    end
+  end
+
+  def color_bomb_count(bomb_count)
+    case bomb_count
+
+    when "1"
+      bomb_count.light_blue.bold
+    when "2"
+      bomb_count.green.bold
+    when "3"
+      bomb_count.light_magenta.bold
+    when "4"
+      bomb_count.blue.bold
+    when "5"
+      bomb_count.magenta.bold
+    when "6"
+      bomb_count.cyan.bold
+    when "7"
+      bomb_count.light_black.bold
+    when "8"
+      bomb_count.black.bold
     end
   end
 
